@@ -31,17 +31,27 @@ class Sprite(turtle.Turtle):
         self.fd(self.speed)
         if self.xcor() > 290:
             self.setx(290)
-            self.rt(60)
+            self.rt(40)
         if self.xcor() < -290:
             self.setx(-290)
-            self.rt(60)
+            self.rt(40)
 
         if self.ycor() > 290:
             self.sety(290)
-            self.rt(60)
+            self.rt(40)
         if self.ycor() < -290:
             self.sety(-290)
-            self.rt(60)
+            self.rt(40)
+
+    def is_collision(self, other):
+        if (self.xcor() >= (other.xcor() - 20)) and \
+        (self.xcor() <= (other.xcor() + 20)) and \
+        (self.ycor() >= (other.ycor() - 20)) and \
+        (self.ycor() <= (other.ycor() + 20)):
+            return True
+        else:
+            return False
+
 
 class Player(Sprite):
     def __init__(self, spriteshap, color, startx, starty):
@@ -50,16 +60,26 @@ class Player(Sprite):
         self.lives = 4
 
     def turn_left(self):
-        self.lt(45)
+        self.lt(20)
 
     def turn_right(self):
-        self.rt(45)
+        self.rt(20)
 
     def accelerate(self):
-        self.speed += 1
+        if (self.speed < 10):
+            self.speed += 1
 
     def decelerate(self):
-        self.speed -= 1
+        if (self.speed > -10):
+            self.speed -= 1
+
+class Enemy(Sprite):
+    def __init__(self, spriteshap, color, startx, starty):
+        Sprite.__init__(self, spriteshap, color, startx, starty)
+        self.speed = 3
+        self.setheading(random.randint(0, 360))
+
+
 
 
 class Game():
@@ -94,6 +114,7 @@ game.draw_boarder()
 
 
 player = Player("triangle", "white", 5, 5)
+enemy = Enemy('circle', "red", -100, 0)
 
 # keyboard bindings
 
@@ -106,6 +127,10 @@ turtle.listen()
 # Main game loop
 while True:
     player.move()
+    enemy.move()
+
+    if player.is_collision(enemy):
+        enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
 
 
 delay = input("Enter to finish. ->")
