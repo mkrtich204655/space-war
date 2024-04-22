@@ -8,7 +8,7 @@ turtle.fd(0)
 # Animation speed
 turtle.speed(0)
 # Background color
-turtle.bgcolor("Red")
+turtle.bgcolor("Black")
 # Hide the default turtle
 turtle.ht()
 # Memory
@@ -27,7 +27,43 @@ class Sprite(turtle.Turtle):
 
         self.speed = 1
 
-player = Sprite("triangle", "white", 5, 5)
+    def move(self):
+        self.fd(self.speed)
+
+class Player(Sprite):
+    def __init__(self, spriteshap, color, startx, starty):
+        Sprite.__init__(self, spriteshap, color, startx, starty)
+        self.speed = 1
+        self.lives = 4
+
+    def turn_left(self):
+        self.lt(45)
+
+    def turn_right(self):
+        self.rt(45)
+
+    def accelerate(self):
+        self.speed += 1
+
+    def decelerate(self):
+        self.speed -= 1
+
+
+
+player = Player("triangle", "white", 5, 5)
+
+# keyboard bindings
+
+turtle.onkey(player.turn_left, "Left")
+turtle.onkey(player.turn_right, "Right")
+turtle.onkey(player.accelerate, "Up")
+turtle.onkey(player.decelerate, "Down")
+turtle.listen()
+
+# Main game loop
+while True:
+    player.move()
+
 
 delay = input("Enter to finish. ->")
 
