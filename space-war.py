@@ -25,23 +25,23 @@ class Sprite(turtle.Turtle):
         self.fd(0)
         self.goto(startx, starty)
 
-        self.speed = 1
+        self.speed = 3
 
     def move(self):
         self.fd(self.speed)
         if self.xcor() > 290:
             self.setx(290)
-            self.rt(40)
+            self.lt(40)
         if self.xcor() < -290:
             self.setx(-290)
-            self.rt(40)
+            self.lt(40)
 
         if self.ycor() > 290:
             self.sety(290)
-            self.rt(40)
+            self.lt(40)
         if self.ycor() < -290:
             self.sety(-290)
-            self.rt(40)
+            self.lt(40)
 
     def is_collision(self, other):
         if (self.xcor() >= (other.xcor() - 20)) and \
@@ -56,8 +56,8 @@ class Sprite(turtle.Turtle):
 class Player(Sprite):
     def __init__(self, spriteshap, color, startx, starty):
         Sprite.__init__(self, spriteshap, color, startx, starty)
-        self.speed = 1
-        self.lives = 4
+        self.speed = 4
+        self.lives = 3
 
     def turn_left(self):
         self.lt(20)
@@ -76,9 +76,14 @@ class Player(Sprite):
 class Enemy(Sprite):
     def __init__(self, spriteshap, color, startx, starty):
         Sprite.__init__(self, spriteshap, color, startx, starty)
-        self.speed = 3
+        self.speed = 4
         self.setheading(random.randint(0, 360))
 
+class Ally(Sprite):
+    def __init__(self, spriteshap, color, startx, starty):
+        Sprite.__init__(self, spriteshap, color, startx, starty)
+        self.speed = 4
+        self.setheading(random.randint(0, 360))
 
 class Missile(Sprite):
     def __init__(self, spriteshap, color, startx, starty):
@@ -140,9 +145,10 @@ game.draw_boarder()
 
 
 
-player = Player("triangle", "white", 5, 5)
+player = Player("triangle", "white", 4, 4)
 enemy = Enemy('circle', "red", -100, 0)
 missile = Missile("triangle", "yellow", 0, 0)
+ally = Ally("square", "blue", 0, 0)
 
 # keyboard bindings
 
@@ -158,6 +164,7 @@ while True:
     player.move()
     enemy.move()
     missile.move()
+    ally.move()
 
     if player.is_collision(enemy):
         enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
@@ -166,6 +173,11 @@ while True:
         enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
         missile.status = "ready"
         missile.goto(-1000, 1000)
+
+
+    if missile.is_collision(ally):
+        ally.goto(random.randint(-250, 250), random.randint(-250, 250))
+        missile.status = "ready"
 
 
 
