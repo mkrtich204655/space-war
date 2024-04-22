@@ -95,6 +95,7 @@ class Missile(Sprite):
 
     def fire(self):
         if self.status == "ready":
+            os.system("afplay laser.mp3&")
             self.goto(player.xcor(), player.ycor())
             self.setheading(player.heading())
             self.status = "firing"
@@ -135,6 +136,15 @@ class Game():
             self.pen.rt(90)
         self.pen.penup()
         self.pen.ht()
+        self.pen.pendown()
+
+    def show_status(self):
+        self.pen.undo()
+        msg = "Score: %s" %(self.score)
+        self.pen.penup()
+        self.pen.goto(-300, 310)
+        self.pen.write(msg, font=("Arial", 16, "normal"))
+
 
 # Create Game
 
@@ -142,7 +152,7 @@ game = Game()
 
 game.draw_boarder()
 
-
+game.show_status()
 
 
 player = Player("triangle", "white", 4, 4)
@@ -167,17 +177,31 @@ while True:
     ally.move()
 
     if player.is_collision(enemy):
+        os.system("afplay explosion.mp3&")
         enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
+        game.score -= 150
+        game.show_status()
+
 
     if missile.is_collision(enemy):
+        os.system("afplay laser.mp3&")
         enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
         missile.status = "ready"
         missile.goto(-1000, 1000)
+        game.score += 100
+        game.show_status()
 
 
     if missile.is_collision(ally):
+        os.system("afplay laser.mp3&")
         ally.goto(random.randint(-250, 250), random.randint(-250, 250))
         missile.status = "ready"
+        missile.goto(-1000, 1000)
+        game.score -= 100
+        game.show_status()
+
+
+
 
 
 
