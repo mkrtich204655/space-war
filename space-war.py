@@ -29,6 +29,19 @@ class Sprite(turtle.Turtle):
 
     def move(self):
         self.fd(self.speed)
+        if self.xcor() > 290:
+            self.setx(290)
+            self.rt(60)
+        if self.xcor() < -290:
+            self.setx(-290)
+            self.rt(60)
+
+        if self.ycor() > 290:
+            self.sety(290)
+            self.rt(60)
+        if self.ycor() < -290:
+            self.sety(-290)
+            self.rt(60)
 
 class Player(Sprite):
     def __init__(self, spriteshap, color, startx, starty):
@@ -47,6 +60,36 @@ class Player(Sprite):
 
     def decelerate(self):
         self.speed -= 1
+
+
+class Game():
+    def __init__(self):
+        self.level = 1
+        self.score = 0
+        self.state = "playing"
+        self.pen = turtle.Turtle()
+        self.lives = 3
+
+    def draw_boarder(self):
+        # Boarders
+        self.pen.speed(0)
+        self.pen.color("white")
+        self.pen.pensize(3)
+        self.pen.penup()
+        self.pen.goto(-300, 300)
+        self.pen.pendown()
+        for side in range(4):
+            self.pen.fd(600)
+            self.pen.rt(90)
+        self.pen.penup()
+        self.pen.ht()
+
+# Create Game
+
+game = Game()
+
+game.draw_boarder()
+
 
 
 
