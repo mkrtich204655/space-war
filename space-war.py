@@ -33,19 +33,18 @@ class Sprite(turtle.Turtle):
 
     def move(self):
         self.fd(self.speed)
+        #Boundary detection
         if self.xcor() > 290:
-            self.setx(290)
-            self.lt(40)
+           self.setx(self.xcor() - 580)
+
         if self.xcor() < -290:
-            self.setx(-290)
-            self.lt(40)
+           self.setx(self.xcor() + 580)
 
         if self.ycor() > 290:
-            self.sety(290)
-            self.lt(40)
+           self.sety(self.ycor() - 580)
+
         if self.ycor() < -290:
-            self.sety(-290)
-            self.lt(40)
+           self.sety(self.ycor() + 580)
 
     def is_collision(self, other):
         if (self.xcor() >= (other.xcor() - 15)) and \
@@ -65,24 +64,44 @@ class Player(Sprite):
         self.lives = 3
 
     def turn_left(self):
-        self.lt(20)
+        self.lt(30)
 
     def turn_right(self):
-        self.rt(20)
+        self.rt(30)
 
     def accelerate(self):
         if (self.speed < 20):
-            self.speed += 1
+            self.speed += 3
 
     def decelerate(self):
         if (self.speed > -20):
-            self.speed -= 1
+            self.speed -= 3
 
 class Enemy(Sprite):
     def __init__(self, spriteshap, color, startx, starty):
         Sprite.__init__(self, spriteshap, color, startx, starty)
         self.speed = 4
         self.setheading(random.randint(0, 360))
+
+class Particle(Sprite):
+    def __init__(self, spriteshap, color, startx, starty):
+        Sprite.__init__(self, spriteshap, color, startx, starty)
+        self.shapesize(stretch_wid = 0.2, stretch_len = 0.2, outline = None)
+        self.goto(-1000, -1000)
+        self.frame = 0
+
+    def explode(self, startx, starty):
+        self.goto(startx, starty)
+        self.setheading(random.randint(0, 360))
+        self.frame = 1
+
+    def move(self):
+        if self.frame > 0:
+            self.fd(10)
+            self.frame += 1
+        if self.frame > 10:
+            self.frame = 0
+            self.goto(-1000, 1000)
 
 class Ally(Sprite):
     def __init__(self, spriteshap, color, startx, starty):
@@ -94,7 +113,7 @@ class Missile(Sprite):
     def __init__(self, spriteshap, color, startx, starty):
         Sprite.__init__(self, spriteshap, color, startx, starty)
         self.shapesize(stretch_wid = 0.1, stretch_len = 0.4, outline = None)
-        self.speed = 20
+        self.speed = 30
         self.status = "ready"
         self.goto(-1000, 1000)
 
@@ -172,6 +191,9 @@ allies = []
 for i in range(6):
     allies.append(Ally("square", "blue", random.randint(-200, 200), random.randint(-200, 200)))
 
+particles = []
+for i in range(15):
+    particles.append(Particle("circle", random.choice(["yellow", "red", "orange"]), 0, 0))
 
 # keyboard bindings
 
@@ -196,15 +218,24 @@ while True:
             os.system("afplay bad.mp3&")
             enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
             game.score -= 150
+            if (game.score <= 1000):
+                for enemy in enemies:
+                    enemy.speed = 4
             game.show_status()
 
         if missile.is_collision(enemy):
             os.system("afplay good.mp3&")
             enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
             missile.status = "ready"
+            for particle in particles:
+                particle.explode(missile.xcor(), missile.ycor())
             missile.goto(-1000, 1000)
             game.score += 100
+            if (game.score >= 1000):
+                for enemy in enemies:
+                    enemy.speed = 8
             game.show_status()
+
 
     for ally in allies:
         ally.move()
@@ -214,7 +245,14 @@ while True:
             missile.status = "ready"
             missile.goto(-1000, 1000)
             game.score -= 100
+            if (game.score <= 1000):
+                for enemy in enemies:
+                    enemy.speed = 4
             game.show_status()
+
+    for particle in particles:
+        particle.move()
+
 
 delay = input("Enter to finish. ->")
 
