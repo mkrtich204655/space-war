@@ -164,7 +164,7 @@ class Game():
 
     def show_status(self):
         self.pen.undo()
-        msg = "Score: %s" %(self.score)
+        msg = "Score: %s" %(self.score) + " Lives: %s" %(self.lives)
         self.pen.penup()
         self.pen.goto(-300, 310)
         self.pen.write(msg, font=("Arial", 16, "normal"))
@@ -205,7 +205,8 @@ turtle.onkey(missile.fire, "space")
 turtle.listen()
 
 # Main game loop
-while True:
+run = True
+while run:
     turtle.update()
     time.sleep(0.02)
     player.move()
@@ -217,10 +218,7 @@ while True:
         if player.is_collision(enemy):
             os.system("afplay bad.mp3&")
             enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
-            game.score -= 150
-            if (game.score <= 1000):
-                for enemy in enemies:
-                    enemy.speed = 4
+            game.lives -= 1
             game.show_status()
 
         if missile.is_collision(enemy):
@@ -253,6 +251,8 @@ while True:
     for particle in particles:
         particle.move()
 
+    if game.lives <= 0:
+        run = False
 
 delay = input("Enter to finish. ->")
 
