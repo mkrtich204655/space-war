@@ -48,10 +48,10 @@ class Sprite(turtle.Turtle):
             self.lt(40)
 
     def is_collision(self, other):
-        if (self.xcor() >= (other.xcor() - 20)) and \
-        (self.xcor() <= (other.xcor() + 20)) and \
-        (self.ycor() >= (other.ycor() - 20)) and \
-        (self.ycor() <= (other.ycor() + 20)):
+        if (self.xcor() >= (other.xcor() - 15)) and \
+        (self.xcor() <= (other.xcor() + 15)) and \
+        (self.ycor() >= (other.ycor() - 15)) and \
+        (self.ycor() <= (other.ycor() + 15)):
             return True
         else:
             return False
@@ -61,7 +61,7 @@ class Player(Sprite):
     def __init__(self, spriteshap, color, startx, starty):
         Sprite.__init__(self, spriteshap, color, startx, starty)
         self.shapesize(stretch_wid=0.6, stretch_len=1.1, outline=None)
-        self.speed = 4
+        self.speed = 0
         self.lives = 3
 
     def turn_left(self):
@@ -71,11 +71,11 @@ class Player(Sprite):
         self.rt(20)
 
     def accelerate(self):
-        if (self.speed < 10):
+        if (self.speed < 20):
             self.speed += 1
 
     def decelerate(self):
-        if (self.speed > -10):
+        if (self.speed > -20):
             self.speed -= 1
 
 class Enemy(Sprite):
@@ -100,7 +100,7 @@ class Missile(Sprite):
 
     def fire(self):
         if self.status == "ready":
-            os.system("start cmd /C \"afplay laser.mp3\"")
+            os.system("afplay fire.mp3&")
             self.goto(player.xcor(), player.ycor())
             self.setheading(player.heading())
             self.status = "firing"
@@ -193,13 +193,13 @@ while True:
         enemy.move()
 
         if player.is_collision(enemy):
-            os.system("afplay explosion.mp3&")
+            os.system("afplay bad.mp3&")
             enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
             game.score -= 150
             game.show_status()
 
         if missile.is_collision(enemy):
-            os.system("afplay laser.mp3&")
+            os.system("afplay good.mp3&")
             enemy.goto(random.randint(-250, 250), random.randint(-250, 250))
             missile.status = "ready"
             missile.goto(-1000, 1000)
@@ -209,7 +209,7 @@ while True:
     for ally in allies:
         ally.move()
         if missile.is_collision(ally):
-            os.system("afplay laser.mp3&")
+            os.system("afplay bad.mp3&")
             ally.goto(random.randint(-250, 250), random.randint(-250, 250))
             missile.status = "ready"
             missile.goto(-1000, 1000)
